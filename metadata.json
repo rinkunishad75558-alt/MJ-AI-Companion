@@ -1,0 +1,6 @@
+{
+  "name": "MJ ❤️ - AI Companion",
+  "description": "Your personal AI companion, smart assistant, and mobile OS controller.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
