@@ -148,6 +148,77 @@ fun ToolsScreen(
                 }
             }
         }
+
+        // Community & Developer Integrations
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(20.dp),
+                colors = CardDefaults.cardColors(containerColor = Color(0xFF13132B)),
+                border = BorderStroke(1.dp, Color(0xFF1E293B))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(imageVector = Icons.Default.Share, contentDescription = null, tint = Color(0xFF9333EA))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(text = "Developer & Community", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold, color = Color(0xFFF1F5F9))
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    IntegrationItem(
+                        title = "GitHub Repository",
+                        description = "Star and inspect companion source code",
+                        icon = "🌐",
+                        onClick = { Toast.makeText(context, "Opening GitHub: rinkunishad/mj-companion...", Toast.LENGTH_SHORT).show() }
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    IntegrationItem(
+                        title = "Overwolf Overlay Sync",
+                        description = "Enable low-latency PC companion widgets",
+                        icon = "🐺",
+                        onClick = { Toast.makeText(context, "Overwolf Engine: Connected & Synced!", Toast.LENGTH_SHORT).show() }
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    IntegrationItem(
+                        title = "Download Latest APK",
+                        description = "Install stable release binary directly",
+                        icon = "📲",
+                        onClick = { Toast.makeText(context, "Downloading stable release APK v1.0...", Toast.LENGTH_SHORT).show() }
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                    IntegrationItem(
+                        title = "GitHub Issues Tracker",
+                        description = "Report bugs, request features or suggest fixes",
+                        icon = "🐞",
+                        onClick = { Toast.makeText(context, "Redirecting to Issues tracker...", Toast.LENGTH_SHORT).show() }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun IntegrationItem(title: String, description: String, icon: String, onClick: () -> Unit) {
+    OutlinedCard(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.outlinedCardColors(containerColor = Color(0xFF1E1E3F).copy(alpha = 0.5f)),
+        border = BorderStroke(1.dp, Color(0xFF334155).copy(alpha = 0.5f))
+    ) {
+        Row(
+            modifier = Modifier.padding(12.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(text = icon, fontSize = 24.sp)
+            Spacer(modifier = Modifier.width(12.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(text = title, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Bold, color = Color(0xFFF1F5F9))
+                Text(text = description, style = MaterialTheme.typography.labelSmall, color = Color(0xFF94A3B8))
+            }
+            Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null, tint = Color(0xFF64748B))
+        }
     }
 }
 

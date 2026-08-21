@@ -1,0 +1,75 @@
+name: Build and Release Debug APK
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Decode Debug Keystore
+        run: |
+          if [ -f debug.keystore.base64 ]; then
+            echo "Decoding debug.keystore..."
+            base64 -d debug.keystore.base64 > debug.keystore
+          else
+            echo "debug.keystore.base64 not found, relying on Gradle auto-generation."
+          fi
+
+      - name: Generate Gradle Wrapper
+        run: gradle wrapper
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Verify Build Output
+        run: |
+          APK_PATH=$(find app/build/outputs/apk/debug/ -name "*.apk" | head -n 1)
+          if [ -z "$APK_PATH" ]; then
+            echo "Error: No APK file found!"
+            exit 1
+          fi
+          echo "APK found at: $APK_PATH"
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_ENV
+
+      - name: Upload APK as Workflow Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: MJ-Companion-Debug-APK
+          path: ${{ env.APK_PATH }}
+
+      - name: Create GitHub Release and Upload APK
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG_NAME="v1.0.${{ github.run_number }}"
+          RELEASE_NAME="MJ ❤️ Companion - Release $TAG_NAME"
+          
+          echo "Creating Release $TAG_NAME..."
+          
+          gh release create "$TAG_NAME" "${{ env.APK_PATH }}" \
+            --title "$RELEASE_NAME" \
+            --notes "### Automated Release of MJ ❤️ Companion App\n\nDownload the attached APK below to install directly on your phone.\n\n- **Version**: 1.0.${{ github.run_number }}\n- **Build Date**: $(date +'%Y-%m-%d %H:%M:%S')\n- **Git Commit**: ${{ github.sha }}" \
+            --prerelease=false
